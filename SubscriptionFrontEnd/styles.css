@@ -1,0 +1,20 @@
+body {
+    background-color: #124876;
+    font-size: 24px;
+}
+#form {
+    list-style: none;
+}
+.Container {
+    width: 100%;
+    max-width: 760px;
+    height: 70vh;
+    margin: 0px auto;
+    background-color: #A0A0A0;
+    padding-top: 20%;
+}
+.InnerContainer {
+    width: 100%;
+    max-width: 300px;
+    margin: 0px auto;
+}
