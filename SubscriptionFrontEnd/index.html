@@ -22,12 +22,11 @@
                             <input type="checkbox" id="sub-4"/>
                             <label for="sub-4">Rabbi 4</label>
 
-                    <button onclick="subscribe()">Subscribe</button>
+                    <button onclick="pushChanges()" id="subscribeButton">Subscribe</button>
                     <p class="message">Already subscribed? <a href="#" onclick="toggleForm();">Edit subscriptions</a></p>
                 </form>
                 <form class="login-form">
-                    <input type="text" placeholder="username"/>
-                    <input type="password" placeholder="password"/>
+                    <input type="text" placeholder="email address" id="editemail"/>
                     <button onclick="editSubscriptions()">Edit Subscriptions</button>
                     <p class="message">Not subscribed? <a href="#" onclick="toggleForm();">Subscribe now</a></p>
                 </form>

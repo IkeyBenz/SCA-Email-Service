@@ -10,60 +10,87 @@
  firebase.initializeApp(config);
  var database = firebase.database();
 
- function submitPreferences() {
-     const emailAddress = document.getElementById('email').value;
-     const password = document.getElementById('password').value;
-     const subscriptions = document.getElementById('subs').value;
-     const zip = document.getElementById('zip').value;
-     // Check if email is not already registered
-
-     // If it is, check if the password entered matches the one stored with said email
-
-     // If password is no good, alert the user that the password is incorrect
-
-     // Make a reset password screen (oy that's going to be a pain)
-
-
-     database.ref().child("Subscribers").orderByChild("Email").equalTo(emailAddress).once("value",snapshot => {
-         const userData = snapshot.val();
-         if (userData) {
-             alert("The email address entered is already registered for subscriptions.");
-         } else {
-
-             // database.ref('Subscribers').push({
-             //     Email: emailAddress,
-             //     Password: password;
-             //     Subscriptions: subscriptions,
-             //     ZipCode: zip
-             // });
-             // database.ref('Zipcodes/' + zip).push(emailAddress);
-        }
-    }
-}
 
 function toggleForm() {
      $('form').animate({height: "toggle", opacity: "toggle"}, "slow");
 }
 function requiredFieldsAreFilledOut() {
-    if (document.getElementById('email').value == "") {
-        return false
-    }
-    const subs = [1,2,3,4];
+    if (document.getElementById('email').value == "") {return false}
+    if (document.getElementById('zipcode').value == "") {return false}
     var atLeastOnecheckboxIsSelected = false;
-    for (i in subs) {
-        if (document.getElementById(`subs-${i}`).checked == true) {
+    for (var i = 1; i < 4; i++) {
+        if (document.getElementById(`sub-${i}`).checked == true) {
             atLeastOnecheckboxIsSelected = true;
         }
     }
     return atLeastOnecheckboxIsSelected
 }
-function subscribe() {
-    if (requiredFieldsAreFilledOut() && document.getElementById('zipcode').value != "") {
-
-    }
-}
+// function subscribe() {
+//     if (requiredFieldsAreFilledOut() && document.getElementById('zipcode').value != "") {
+//         const emailAddress = document.getElementById('email').value;
+//         const zip = document.getElementById('zipcode').value;
+//         database.ref("Subscribers").orderByChild("Email").equalTo(emailAddress).once("value",snapshot => {
+//             const emailExists = snapshot.val();
+//             if (emailExists) {
+//                 alert("The email address entered is already registered for subscriptions.");
+//             } else {
+//                 pushChanges();
+//            }
+//        });
+//     }
+// }
 function editSubscriptions() {
-    if (requiredFieldsAreFilledOut()) {
+    const emailAddress = document.getElementById('editemail').value;
+    database.ref("Subscribers").orderByChild("Email").equalTo(emailAddress).once("value",snapshot => {
+        const data = snapshot.val();
+        if (data) {
+            document.getElementById('email').value = emailAddress;
+            const zipcode = data[Object.keys(data)].ZipCode;
+            const subscriptions = data[Object.keys(data)].Subscriptions;
+            const subKeys = Object.keys(subscriptions);
+            for (var i = 0; i < subKeys.length; i++) {
+                document.getElementById(`sub-${i+1}`).checked = subscriptions[subKeys[i]];
+            }
+            document.getElementById('zipcode').value = zipcode;
+            document.getElementById('subscribeButton').innerHTML = "Confirm Changes";
+            toggleForm();
 
+        } else {
+            alert('The email address entered is not registered for subscriptions.\nPlease register and then choose subscriptions.')
+        }
+    });
+}
+function pushChanges() {
+    if (requiredFieldsAreFilledOut()) {
+        const emailAddress = document.getElementById('email').value;
+        const zip = document.getElementById('zipcode').value;
+        var subID = "";
+        // Look for subscriber with email matching the one entered
+        database.ref("Subscribers").orderByChild("Email").equalTo(emailAddress).once("value", snapshot => {
+            const subscriberObj = snapshot.val();
+            // If the subscriber with specified email exists, change subID to be whatever the id is for that subscriber
+            if (subscriberObj) {
+                subID = Object.keys(subscriberObj)[0].toString();
+                // Removes email from zip code in case it changed
+                database.ref(`Zipcodes/${subscriberObj[Object.keys(subscriberObj)].ZipCode}/${subID}`).remove();
+            } else {
+                // Otherwise create a new subID for the subscriber
+                subID = database.ref("Subscribers").push().key;
+            }
+            database.ref(`Subscribers/${subID}`).set({
+                Email: emailAddress,
+                ZipCode: zip,
+                Subscriptions: {
+                    Rabbi1: document.getElementById('sub-1').checked,
+                    Rabbi2: document.getElementById('sub-2').checked,
+                    Rabbi3: document.getElementById('sub-3').checked,
+                    Rabbi4: document.getElementById('sub-4').checked
+                }
+            });
+            database.ref(`Zipcodes/${zip}/${subID}`).set(emailAddress);
+            alert("Your subscription preferences have been saved.");
+        })
+    } else {
+        alert("Please make sure all fields are filled out.");
     }
 }
