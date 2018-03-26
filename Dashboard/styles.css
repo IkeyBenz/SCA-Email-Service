@@ -1,0 +1,78 @@
+:root {
+    --StatsWidth: 300px;
+    --RightSideWidth: calc(100vw - var(--StatsWidth));
+    --HeaderHeight: 100px;
+    --ThemeColor: #0B4877;
+}
+body {
+    margin: 0 0;
+}
+.Header {
+    width: var(--RightSideWidth);
+    height: var(--HeaderHeight);
+    position: fixed;
+    top: 0px;
+    left: var(--StatsWidth);
+    background-color: var(--ThemeColor);
+    z-index: 2;
+    text-align: center;
+    animation: ease;
+    animation-duration: 0.5s;
+}
+.logo {
+    height: 90%;
+    width: auto;
+}
+.Stats {
+    width: var(--StatsWidth);
+    height: 100vh;
+    position: fixed;
+    left: 0px;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 3;
+    animation: ease;
+    animation-duration: 0.5s;
+}
+.Stats h1 {
+    width: 100%;
+    height: 100px;
+    height: var(--HeaderHeight);
+    text-align: center;
+    color: white;
+    text-decoration: underline;
+}
+
+
+.FileDroperContainer {
+    width: var(--RightSideWidth);
+    height: calc(var(--RightSideWidth) * 2.5);
+    position: absolute;
+    top: var(--HeaderHeight);
+    left: var(--StatsWidth);
+    animation: ease;
+    animation-duration: 0.5s;
+}
+.left {
+    left: 20px;
+}
+.icon {
+    height: 40px;
+    width: auto;
+    position: absolute;
+    top: 30px;
+}
+.PrevImgContainer {
+    width: calc(50% - 2px);
+    height: calc(20% - 2px);
+    color: lightblue;
+    border: solid 1px black;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    float: left;
+}
+.TextContainer {
+    width: 80%;
+    margin: 0 auto;
+    color: white;
+}
