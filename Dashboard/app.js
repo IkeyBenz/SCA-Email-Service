@@ -6,11 +6,47 @@ var config = {
   storageBucket: "sca-subscriptions.appspot.com",
   messagingSenderId: "1082275540488"
 };
-window.onload = function () {
-    firebase.initializeApp(config);
-    var database = firebase.database();
-}
 
+firebase.initializeApp(config);
+var database = firebase.database();
+
+// function uploadNewPreferenceOptions() {
+//     const authors = ["Rabbi Marc Angel", "Rabbi Joseph Beyda", "Rabbi David Cardozo", "Rabbi Joseph Dweck",
+//                      "Rabbi Nathan Dweck","Rabbi Nissim Elnecavé", "Rabbi Avi Harari", "Rabbi Henry Hasson PHD",
+//                      "Rabbi Alex Israel", "Rabbi Jonathan Sacks", "Mr. Irving Safdieh", "Rabbi Jack Savdie"]
+//     const titles = ["Angel for Shabbat", "Torah Thought", "Thoughts to Ponder", "Touring the Talmud",
+//                     "Parasha Commentary", "Parasha Commentary", "Parasha Perspectives", "Ach Moshe",
+//                     "The Parsha Discussion", "Covenant and Conversation", "Sabra Report", "Kol Yaakob"]
+//     for (var i = 0; i < authors.length; i++) {
+//         database.ref('SubcriptionOptions').push({
+//             Author: authors[i],
+//             Title: titles[i]
+//         });
+//     }
+// }
+// uploadNewPreferenceOptions();
+firebase.auth().onAuthStateChanged(function(user) {
+  if (user) {
+    // User is signed in.
+    var email = user.email;
+    var emailVerified = user.emailVerified;
+    var uid = user.uid;
+    const header = document.getElementsByClassName('Header')[0];
+    const profileIcon = document.getElementById('profileIcon');
+    const displayName = document.createElement('p');
+    displayName.innerHTML = email;
+    displayName.className = 'icon right';
+    displayName.style.color = 'white';
+    header.appendChild(displayName);
+    setTimeout(function () {
+        console.log(displayName.offsetWidth);
+        profileIcon.style.right = `${displayName.offsetWidth + 30}px`;
+    }, 500)
+  } else {
+    // User is signed out.
+    // ...
+  }
+});
 
 function toggleLoignView() {
     const overlay = document.getElementById('Overlay');
