@@ -7,6 +7,21 @@
 body {
     margin: 0 0;
 }
+.login-container {
+    position: fixed;
+    left: calc(50vw - 200px);
+    top: 200px;
+    z-index: 5;
+    display: none;
+}
+#Overlay {
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 4;
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    display: none;
+}
 .Header {
     width: var(--RightSideWidth);
     height: var(--HeaderHeight);
@@ -54,6 +69,9 @@ body {
 }
 .left {
     left: 20px;
+}
+.right {
+    right: 20px;
 }
 .icon {
     height: 40px;

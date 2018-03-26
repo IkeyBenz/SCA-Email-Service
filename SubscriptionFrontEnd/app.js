@@ -25,20 +25,6 @@ function requiredFieldsAreFilledOut() {
     }
     return atLeastOnecheckboxIsSelected
 }
-// function subscribe() {
-//     if (requiredFieldsAreFilledOut() && document.getElementById('zipcode').value != "") {
-//         const emailAddress = document.getElementById('email').value;
-//         const zip = document.getElementById('zipcode').value;
-//         database.ref("Subscribers").orderByChild("Email").equalTo(emailAddress).once("value",snapshot => {
-//             const emailExists = snapshot.val();
-//             if (emailExists) {
-//                 alert("The email address entered is already registered for subscriptions.");
-//             } else {
-//                 pushChanges();
-//            }
-//        });
-//     }
-// }
 function editSubscriptions() {
     const emailAddress = document.getElementById('editemail').value;
     database.ref("Subscribers").orderByChild("Email").equalTo(emailAddress).once("value",snapshot => {
