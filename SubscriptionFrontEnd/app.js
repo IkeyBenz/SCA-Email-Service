@@ -1,19 +1,40 @@
 // Initialize Firebase
- var config = {
+var config = {
    apiKey: "AIzaSyAFYRr1vyPOAx1DU7AMziYGObpZsO1KJkE",
    authDomain: "sca-subscriptions.firebaseapp.com",
    databaseURL: "https://sca-subscriptions.firebaseio.com",
    projectId: "sca-subscriptions",
    storageBucket: "sca-subscriptions.appspot.com",
    messagingSenderId: "1082275540488"
- };
- firebase.initializeApp(config);
- var database = firebase.database();
-
+};
+firebase.initializeApp(config);
+var database = firebase.database();
+window.onload = initializeSubscribeForm;
 
 function toggleForm() {
      $('form').animate({height: "toggle", opacity: "toggle"}, "slow");
 }
+function initializeSubscribeForm() {
+    database.ref('SubcriptionOptions').once('value', function(snapshot) {
+        snapshot.forEach(function(child) {
+            const author = child.val().Author.toString();
+            const title = child.val().Title.toString();
+            const span = document.createElement('span');
+            const input = document.createElement('INPUT');
+            const desc = document.createTextNode(`${author}: ${title}`);
+            input.setAttribute('type', 'checkbox');
+            input.setAttribute('id', author);
+            input.setAttribute('class', 'subscription');
+            span.appendChild(input);
+            span.appendChild(desc);
+            span.appendChild(document.createElement('br'));
+            document.getElementById('subscriptionsView').appendChild(span);
+        })
+    })
+    toggleForm();
+}
+
+
 function requiredFieldsAreFilledOut() {
     if (document.getElementById('email').value == "") {return false}
     if (document.getElementById('zipcode').value == "") {return false}
@@ -70,12 +91,7 @@ function pushChanges() {
             database.ref(`Subscribers/${subID}`).set({
                 Email: emailAddress,
                 ZipCode: zip,
-                Subscriptions: {
-                    Rabbi1: document.getElementById('sub-1').checked,
-                    Rabbi2: document.getElementById('sub-2').checked,
-                    Rabbi3: document.getElementById('sub-3').checked,
-                    Rabbi4: document.getElementById('sub-4').checked
-                }
+                Subscriptions: subscriptionData()
             });
             database.ref(`Zipcodes/${zip}/${subID}`).set(emailAddress);
             alert("Your subscription preferences have been saved.");
@@ -83,4 +99,12 @@ function pushChanges() {
     } else {
         alert("Please make sure all fields are filled out.");
     }
+}
+function subscriptionData() {
+    data = {}
+    const inputs = document.getElementsByClassName('subscription');
+    Array.prototype.forEach.call(inputs, function(input) {
+        data[input.id] = input.checked;
+    })
+    return data;
 }
