@@ -19,11 +19,12 @@ function initializeSubscribeForm() {
         snapshot.forEach(function(child) {
             const author = child.val().Author.toString();
             const title = child.val().Title.toString();
+            const subscriptionKey = child.key;
             const span = document.createElement('span');
             const input = document.createElement('INPUT');
             const desc = document.createTextNode(`${author}: ${title}`);
             input.setAttribute('type', 'checkbox');
-            input.setAttribute('id', author);
+            input.setAttribute('id', subscriptionKey);
             input.setAttribute('class', 'subscription');
             span.appendChild(input);
             span.appendChild(desc);
@@ -39,11 +40,12 @@ function requiredFieldsAreFilledOut() {
     if (document.getElementById('email').value == "") {return false}
     if (document.getElementById('zipcode').value == "") {return false}
     var atLeastOnecheckboxIsSelected = false;
-    for (var i = 1; i <= 4; i++) {
-        if (document.getElementById(`sub-${i}`).checked == true) {
+    const inputs = document.getElementsByClassName('subscription');
+    Array.prototype.forEach.call(inputs, function(input) {
+        if (input.checked) {
             atLeastOnecheckboxIsSelected = true;
         }
-    }
+    })
     return atLeastOnecheckboxIsSelected
 }
 function editSubscriptions() {
@@ -52,14 +54,14 @@ function editSubscriptions() {
         alert("Email address field cannot be empty.");
     } else {
         database.ref("Subscribers").orderByChild("Email").equalTo(emailAddress).once("value",snapshot => {
-            const data = snapshot.val();
-            if (data) {
+            if (snapshot.val()) {
+                const userKey = snapshot.val()[Object.keys(snapshot.val())];
                 document.getElementById('email').value = emailAddress;
-                const zipcode = data[Object.keys(data)].ZipCode;
-                const subscriptions = data[Object.keys(data)].Subscriptions;
+                const zipcode = userKey.ZipCode;
+                const subscriptions = userKey.Subscriptions;
                 const subKeys = Object.keys(subscriptions);
                 for (var i = 0; i < subKeys.length; i++) {
-                    document.getElementById(`sub-${i+1}`).checked = subscriptions[subKeys[i]];
+                    document.getElementById(`${subKeys[i]}`).checked = subscriptions[subKeys[i]];
                 }
                 document.getElementById('zipcode').value = zipcode;
                 document.getElementById('subscribeButton').innerHTML = "Confirm Changes";
@@ -70,6 +72,14 @@ function editSubscriptions() {
             }
         });
     }
+}
+function test() {
+    database.ref("Subscribers").orderByChild("Email").equalTo("ikey.benz@gmail.com").once("value",snapshot => {
+        const userKey = snapshot.val()[Object.keys(snapshot.val())];
+        if (userKey) {
+            console.log(userKey.Subscriptions);
+        }
+    })
 }
 function pushChanges() {
     if (requiredFieldsAreFilledOut()) {
