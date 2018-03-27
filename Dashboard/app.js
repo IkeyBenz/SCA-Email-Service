@@ -22,7 +22,8 @@ var loggedIn = false;
 //     for (var i = 0; i < authors.length; i++) {
 //         database.ref('SubcriptionOptions').push({
 //             Author: authors[i],
-//             Title: titles[i]
+//             Title: titles[i],
+//             Subscribers: 0
 //         });
 //     }
 // }
@@ -117,7 +118,7 @@ function loadStats() {
     database.ref("SubcriptionOptions").once("value", function(snapshot) {
         snapshot.forEach(function(child) {
             const stat = document.createElement('h4');
-            stat.appendChild(document.createTextNode(`${child.val().Author}: ${child.val().Title} = 0`));
+            stat.appendChild(document.createTextNode(`${child.val().Author}: ${child.val().Title} = ${child.val().Subscribers}`));
             document.getElementById('StatsContainer').appendChild(stat);
         })
     })

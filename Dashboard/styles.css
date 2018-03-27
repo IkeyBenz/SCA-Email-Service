@@ -41,9 +41,11 @@ body {
     width: auto;
     z-index: 5;
 }
+/* Make Stats Wrapper and set similar properties as .Wrapper */
 .Stats {
     width: var(--StatsWidth);
     min-height: 100vh;
+    overflow-y: scroll;
     position: fixed;
     left: 0px;
     background-color: rgba(0, 0, 0, 0.5);
@@ -61,15 +63,19 @@ body {
     text-decoration: underline;
 }
 
-
-.FileDroperContainer {
-    width: var(--RightSideWidth);
-    height: calc(var(--RightSideWidth) * 2.5);
-    position: absolute;
-    top: var(--HeaderHeight);
+.Wrapper {
+    position: fixed;
     left: var(--StatsWidth);
+    width: var(--RightSideWidth);
+    height: calc(100vw - var(--HeaderHeight));
+    top: var(--HeaderHeight);
+    overflow-y: scroll;
     animation: ease;
     animation-duration: 0.5s;
+}
+.FileDroperContainer {
+    width: 100%;
+    height: calc(var(--RightSideWidth) * 2.5);
 }
 .left {
     left: 20px;
