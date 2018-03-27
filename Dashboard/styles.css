@@ -36,7 +36,8 @@ body {
     animation-duration: 0.5s;
 }
 .logo {
-    height: 90%;
+    height: 80%;
+    margin-top: 15px;
     width: auto;
     z-index: 5;
 }

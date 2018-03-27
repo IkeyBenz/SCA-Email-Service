@@ -1,5 +1,14 @@
 @import url(https://fonts.googleapis.com/css?family=Roboto:300);
 
+.Header {
+    width: 100vw;
+    text-align: center;
+}
+.Header img {
+    height: 80px;
+    width: auto;
+    margin-top: 20px;
+}
 .login-page {
   width: 460px;
   padding: 8% 0 0;
