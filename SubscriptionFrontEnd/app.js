@@ -73,14 +73,7 @@ function editSubscriptions() {
         });
     }
 }
-function test() {
-    database.ref("Subscribers").orderByChild("Email").equalTo("ikey.benz@gmail.com").once("value",snapshot => {
-        const userKey = snapshot.val()[Object.keys(snapshot.val())];
-        if (userKey) {
-            console.log(userKey.Subscriptions);
-        }
-    })
-}
+
 function pushChanges() {
     if (requiredFieldsAreFilledOut()) {
         const emailAddress = document.getElementById('email').value;

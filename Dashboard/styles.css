@@ -1,5 +1,5 @@
 :root {
-    --StatsWidth: 300px;
+    --StatsWidth: 0px;
     --RightSideWidth: calc(100vw - var(--StatsWidth));
     --HeaderHeight: 100px;
     --ThemeColor: #0B4877;
@@ -9,18 +9,19 @@ body {
 }
 .login-container {
     position: fixed;
-    left: calc(50vw - 200px);
+    left: calc(50vw - 150px);
     top: 200px;
     z-index: 5;
-    display: none;
+    display: block;
 }
 #Overlay {
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: var(--ThemeColor);
     z-index: 4;
-    position: absolute;
+    position: fixed;
+    top: 100px;
     width: 100vw;
     height: 100vh;
-    display: none;
+    display: block;
 }
 .Header {
     width: var(--RightSideWidth);
@@ -37,20 +38,22 @@ body {
 .logo {
     height: 90%;
     width: auto;
+    z-index: 5;
 }
 .Stats {
     width: var(--StatsWidth);
-    height: 100vh;
+    min-height: 100vh;
     position: fixed;
     left: 0px;
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 3;
     animation: ease;
     animation-duration: 0.5s;
+    display: none;
 }
 .Stats h1 {
     width: 100%;
-    height: 100px;
+    height: 80px;
     height: var(--HeaderHeight);
     text-align: center;
     color: white;

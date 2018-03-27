@@ -10,6 +10,8 @@ var config = {
 firebase.initializeApp(config);
 var database = firebase.database();
 
+var loggedIn = false;
+
 // function uploadNewPreferenceOptions() {
 //     const authors = ["Rabbi Marc Angel", "Rabbi Joseph Beyda", "Rabbi David Cardozo", "Rabbi Joseph Dweck",
 //                      "Rabbi Nathan Dweck","Rabbi Nissim Elnecavé", "Rabbi Avi Harari", "Rabbi Henry Hasson PHD",
@@ -74,10 +76,12 @@ function login() {
         });
         setTimeout(function () {
             if (successful) {
+                loggedIn = true;
                 toggleLoignView();
             }
         }, 1000);
     } else {
+        loggedIn = false;
         alert('Please make sure all fields are filled out properly.');
     }
 }
@@ -96,12 +100,25 @@ function changeBGImg(input, imgID) {
 }
 
 function toggleStatsBar() {
-    if (document.getElementById('StatsBar').style.display == "none") {
-        document.documentElement.style.setProperty('--StatsWidth', '300px');
-        document.getElementById('StatsBar').style.display = "block";
-    } else {
-        document.documentElement.style.setProperty('--StatsWidth', '0px');
-        document.getElementById('StatsBar').style.display = "none";
+    if (loggedIn) {
+        if (document.getElementById('StatsBar').style.display == "none") {
+            loadStats();
+            document.documentElement.style.setProperty('--StatsWidth', '300px');
+            document.getElementById('StatsBar').style.display = "block";
+        } else {
+            document.documentElement.style.setProperty('--StatsWidth', '0px');
+            document.getElementById('StatsBar').style.display = "none";
+        }
     }
+
     return false;
+}
+function loadStats() {
+    database.ref("SubcriptionOptions").once("value", function(snapshot) {
+        snapshot.forEach(function(child) {
+            const stat = document.createElement('h4');
+            stat.appendChild(document.createTextNode(`${child.val().Author}: ${child.val().Title} = 0`));
+            document.getElementById('StatsContainer').appendChild(stat);
+        })
+    })
 }
