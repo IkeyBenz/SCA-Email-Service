@@ -87,7 +87,7 @@ function pushChanges() {
             if (subscriberObj) {
                 subID = Object.keys(subscriberObj)[0].toString();
                 const oldSubs = subscriberObj[subID].Subscriptions;
-                updateDBStats(subID, oldSubs, newSubs);
+                updateDBStats(oldSubs, newSubs);
                 // Removes email from zip code in case it changed
                 database.ref(`Zipcodes/${subscriberObj[Object.keys(subscriberObj)].ZipCode}/${subID}`).remove();
             } else {
@@ -115,7 +115,7 @@ function subscriptionData() {
     })
     return data;
 }
-function updateDBStats(subID, oldSubs, newSubs) {
+function updateDBStats(oldSubs, newSubs) {
     Object.keys(oldSubs).forEach(function(oldSubKey) {
         const ref = database.ref(`SubcriptionOptions/${oldSubKey}/Subscribers`);
         if (oldSubs[oldSubKey] == true && newSubs[oldSubKey] != true) {
