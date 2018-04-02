@@ -130,15 +130,25 @@ function initializeImageUploaderView() {
             const imageContainer = document.createElement('div');
             imageContainer.setAttribute('class', 'PrevImgContainer');
             imageContainer.setAttribute('id', child.key);
+            storage.ref(`Images/${child.key}`).getDownloadURL().then(function(url) {
+                if (url) {
+                    imageContainer.style.backgroundImage = `url(${url})`;
+                }
+            }).catch(function(error) {
+                // Images were not yet uploaded
+            });
+            const gradient = document.createElement('div');
+            gradient.setAttribute('class', 'TopWhiteGradient');
+            gradient.setAttribute('id', `${child.key}-gradient`);
             const imgInput = document.createElement('input');
             imgInput.setAttribute('type', 'file');
             imgInput.setAttribute('id', `${child.key}-input`);
             imgInput.setAttribute('onchange', `changeBGImg(this, '${child.key}')`);
             const desc = document.createElement('h2');
             desc.appendChild(document.createTextNode(`${child.val().Author}: ${child.val().Title}`));
-            desc.setAttribute('id', `${child.key}-description`);
-            imageContainer.appendChild(desc);
-            imageContainer.appendChild(imgInput);
+            gradient.appendChild(desc);
+            gradient.appendChild(imgInput);
+            imageContainer.appendChild(gradient);
             document.getElementById('FileDroperContainer').appendChild(imageContainer);
         })
     })
@@ -146,9 +156,7 @@ function initializeImageUploaderView() {
 function uploadImageFrom(containerID) {
     const file = document.getElementById(`${containerID}-input`).files[0];
     var upload = storage.ref(`Images/${containerID}`).put(file).then(function(snapshot) {
-        //const overlay = document.createElement('div');
-        //overlay.setAttribute('class', 'UploadOverlay');
-        document.getElementById(containerID).style.backgroundColor = 'rgba(0, 255, 0, 0.5)';
+        document.getElementById(`${containerID}-gradient`).style.background = 'linear-gradient(rgb(152, 251, 152), rgba(152, 251, 152, 0.2))';
         const downloadURL = snapshot.downloadURL;
         console.log(downloadURL);
     })
@@ -166,7 +174,7 @@ function changeBGImg(input, imgID) {
                 uploadBtn.setAttribute('onclick', `uploadImageFrom('${imgID}')`);
                 uploadBtn.setAttribute('id', `${imgID}-uploadButton`);
                 uploadBtn.appendChild(document.createTextNode('Upload'));
-                imageContainer.appendChild(uploadBtn);
+                document.getElementById(`${imgID}-gradient`).appendChild(uploadBtn);
             }
         }
         reader.readAsDataURL(input.files[0]);
