@@ -63,7 +63,7 @@ body {
     text-decoration: underline;
 }
 
-.FileDroperContainer {
+#FileDroperContainer {
     position: fixed;
     left: var(--StatsWidth);
     top: var(--HeaderHeight);
@@ -97,4 +97,13 @@ body {
     width: 80%;
     margin: 0 auto;
     color: white;
+}
+.UploadOverlay {
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 255, 0, 0.5);
+}
+h2 {
+    color: black;
 }

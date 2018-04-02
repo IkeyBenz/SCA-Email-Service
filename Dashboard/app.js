@@ -8,9 +8,19 @@ var config = {
 };
 
 firebase.initializeApp(config);
-document.onload = toggleLoignView();
+document.onload = preloadStuff();
+
+function preloadStuff() {
+    setTimeout(function() {
+        toggleLoignView();
+        initializeImageUploaderView();
+        toggleStatsBar();
+        toggleStatsBar();
+    }, 1000);
+}
 
 var database = firebase.database();
+var storage = firebase.storage();
 
 var loggedIn = true;
 
@@ -30,6 +40,7 @@ var loggedIn = true;
 //     }
 // }
 // uploadNewPreferenceOptions();
+
 firebase.auth().onAuthStateChanged(function(user) {
   if (user) {
     // User is signed in.
@@ -89,18 +100,6 @@ function login() {
     }
 }
 
-function changeBGImg(input, imgID) {
-    if (input.files && input.files[0]) {
-        var reader = new FileReader();
-        reader.onload = function (e) {
-            const imageContainer = document.getElementById(imgID);
-            imageContainer.style.backgroundImage = `url(${e.target.result})`;
-            imageContainer.style.backgroundColor = 'lightgray';
-        }
-        reader.readAsDataURL(input.files[0]);
-        input.style.display = "none";
-    }
-}
 
 function toggleStatsBar() {
     if (loggedIn) {
@@ -124,4 +123,52 @@ function loadStats() {
             document.getElementById('StatsContainer').appendChild(stat);
         })
     })
+}
+function initializeImageUploaderView() {
+    database.ref("SubcriptionOptions").once("value", function(snapshot) {
+        snapshot.forEach(function(child) {
+            const imageContainer = document.createElement('div');
+            imageContainer.setAttribute('class', 'PrevImgContainer');
+            imageContainer.setAttribute('id', child.key);
+            const imgInput = document.createElement('input');
+            imgInput.setAttribute('type', 'file');
+            imgInput.setAttribute('id', `${child.key}-input`);
+            imgInput.setAttribute('onchange', `changeBGImg(this, '${child.key}')`);
+            const desc = document.createElement('h2');
+            desc.appendChild(document.createTextNode(`${child.val().Author}: ${child.val().Title}`));
+            desc.setAttribute('id', `${child.key}-description`);
+            imageContainer.appendChild(desc);
+            imageContainer.appendChild(imgInput);
+            document.getElementById('FileDroperContainer').appendChild(imageContainer);
+        })
+    })
+}
+function uploadImageFrom(containerID) {
+    const file = document.getElementById(`${containerID}-input`).files[0];
+    var upload = storage.ref(`Images/${containerID}`).put(file).then(function(snapshot) {
+        //const overlay = document.createElement('div');
+        //overlay.setAttribute('class', 'UploadOverlay');
+        document.getElementById(containerID).style.backgroundColor = 'rgba(0, 255, 0, 0.5)';
+        const downloadURL = snapshot.downloadURL;
+        console.log(downloadURL);
+    })
+}
+
+function changeBGImg(input, imgID) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            const imageContainer = document.getElementById(imgID);
+            imageContainer.style.backgroundImage = `url(${e.target.result})`;
+            imageContainer.style.backgroundColor = 'lightgray';
+            if (document.getElementById(`${imgID}-uploadButton`) == null) {
+                const uploadBtn = document.createElement('button');
+                uploadBtn.setAttribute('onclick', `uploadImageFrom('${imgID}')`);
+                uploadBtn.setAttribute('id', `${imgID}-uploadButton`);
+                uploadBtn.appendChild(document.createTextNode('Upload'));
+                imageContainer.appendChild(uploadBtn);
+            }
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
 }
