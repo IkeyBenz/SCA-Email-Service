@@ -123,6 +123,7 @@ function loadStats() {
         }
         snapshot.forEach(function(child) {
             const stat = document.createElement('h4');
+            stat.setAttribute('id', child.key);
             stat.appendChild(document.createTextNode(`${child.val().Author}: ${child.val().Title} = ${child.val().Subscribers}`));
             document.getElementById('StatsContainer').appendChild(stat);
         })
@@ -234,7 +235,13 @@ function initiateAdd() {
     document.body.appendChild(popup);
 }
 function initiateRemove() {
-
+    const subscriptionsPanel = document.getElementById('StatsContainer').childNodes;
+    subscriptionsPanel.forEach(function(subscription) {
+        const checkbox = document.createElement('input');
+        checkbox.setAttribute('type', 'checkbox');
+        checkbox.setAttribute('onclick', `removeSubscription('${subscription.id}-remove')`);
+        subscription.appendChild(checkbox);
+    })
 }
 function addSubscription() {
     var newSub = database.ref('SubcriptionOptions').push({
@@ -254,5 +261,25 @@ function addSubscription() {
     alert("Your new subscription has been saved.");
 }
 function removeSubscription(subscriptionID) {
+    subscriptionID = subscriptionID.slice(0, -7);
+    const desc = document.getElementById(subscriptionID).textContent;
+    if (confirm(`You are about to remove ${desc} from the subscription options permanently.\nAre you sure you want to continue?`)) {
+        database.ref('Subscribers').once('value', function(subscribers) {
+            subscribers.forEach(function(subscriber) {
+                if (subscriber) {
+                    database.ref(`Subscribers/${subscriber.key}/Subscriptions/${subscriptionID}`).remove();
+                }
+            });
+        });
+        database.ref(`SubcriptionOptions/${subscriptionID}`).remove();
+        setTimeout(function() {
+            initializeImageUploaderView();
+            loadStats();
+            alert("Option removal successful.");
+        }, 1000);
+    } else {
+        loadStats();
+    }
+
 
 }
