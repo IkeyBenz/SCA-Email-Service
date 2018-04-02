@@ -198,3 +198,11 @@ function changeBGImg(input, imgID) {
         reader.readAsDataURL(input.files[0]);
     }
 }
+function sendEmailToSubscribers() {
+    database.ref('Subscribers').once('value', function(subscribers) {
+        subscribers.forEach(function(subscriber) {
+            const emailAddr = subscriber.val().Email;
+            
+        })
+    })
+}

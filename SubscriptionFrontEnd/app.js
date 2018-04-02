@@ -79,12 +79,15 @@ function pushChanges() {
         const emailAddress = document.getElementById('email').value;
         const zip = document.getElementById('zipcode').value;
         var subID = "";
+        const newSubs = subscriptionData();
         // Look for subscriber with email matching the one entered
         database.ref("Subscribers").orderByChild("Email").equalTo(emailAddress).once("value", snapshot => {
             const subscriberObj = snapshot.val();
             // If the subscriber with specified email exists, change subID to be whatever the id is for that subscriber
             if (subscriberObj) {
                 subID = Object.keys(subscriberObj)[0].toString();
+                const oldSubs = subscriberObj[subID].Subscriptions;
+                updateDBStats(subID, oldSubs, newSubs);
                 // Removes email from zip code in case it changed
                 database.ref(`Zipcodes/${subscriberObj[Object.keys(subscriberObj)].ZipCode}/${subID}`).remove();
             } else {
@@ -94,9 +97,10 @@ function pushChanges() {
             database.ref(`Subscribers/${subID}`).set({
                 Email: emailAddress,
                 ZipCode: zip,
-                Subscriptions: subscriptionData()
+                Subscriptions: newSubs
             });
             database.ref(`Zipcodes/${zip}/${subID}`).set(emailAddress);
+            addDBStats(newSubs);
             alert("Your subscription preferences have been saved.");
         })
     } else {
@@ -110,4 +114,28 @@ function subscriptionData() {
         data[input.id] = input.checked;
     })
     return data;
+}
+function updateDBStats(subID, oldSubs, newSubs) {
+    Object.keys(oldSubs).forEach(function(oldSubKey) {
+        const ref = database.ref(`SubcriptionOptions/${oldSubKey}/Subscribers`);
+        if (oldSubs[oldSubKey] == true && newSubs[oldSubKey] != true) {
+            ref.once('value', function(snapshot) {
+                ref.set(snapshot.val() - 1);
+            });
+        } else if (oldSubs[oldSubKey] != true && newSubs[oldSubKey] == true) {
+            ref.once('value', function(snapshot) {
+                ref.set(snapshot.val() + 1);
+            });
+        }
+    });
+}
+function addDBStats(newSubs) {
+    Object.keys(newSubs).forEach(function(newSubKey) {
+        if (newSubs[newSubKey] == true) {
+            const ref = database.ref(`SubcriptionOptions/${newSubKey}/Subscribers`);
+            ref.once('value', function(snapshot) {
+                ref.set(snapshot.val() + 1);
+            });
+        }
+    })
 }
