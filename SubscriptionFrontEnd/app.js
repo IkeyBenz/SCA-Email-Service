@@ -15,7 +15,11 @@ function toggleForm() {
      $('form').animate({height: "toggle", opacity: "toggle"}, "slow");
 }
 function initializeSubscribeForm() {
-    database.ref('SubcriptionOptions').once('value', function(snapshot) {
+    database.ref('SubcriptionOptions').on('value', function(snapshot) {
+        const subOptionsContainer = document.getElementById('subscriptionsView');
+        while (subOptionsContainer.lastChild) {
+            subOptionsContainer.removeChild(subOptionsContainer.lastChild);
+        }
         snapshot.forEach(function(child) {
             const author = child.val().Author.toString();
             const title = child.val().Title.toString();
@@ -29,7 +33,7 @@ function initializeSubscribeForm() {
             span.appendChild(input);
             span.appendChild(desc);
             span.appendChild(document.createElement('br'));
-            document.getElementById('subscriptionsView').appendChild(span);
+            subOptionsContainer.appendChild(span);
         })
     })
     toggleForm();

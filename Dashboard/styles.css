@@ -63,6 +63,9 @@ body {
     color: white;
     text-decoration: underline;
 }
+.AddRemoveButtons {
+    float: left;
+}
 
 #FileDroperContainer {
     position: fixed;
@@ -98,6 +101,9 @@ body {
     margin: 0 auto;
     color: white;
 }
+.Center {
+    text-align: center;
+}
 .TopGradient {
     padding: 10px 0px 20px 5px;
     width: 100%;
@@ -111,4 +117,25 @@ h2 {
     margin-top: 0px;
     margin-bottom: 5px;
     color: black;
+}
+#NewSubscriptionPopup {
+    position: fixed;
+    border-radius: 10px;
+    height: 200px;
+    width: 500px;
+    top: 200px;
+    left: calc(50vw - 250px);
+    background-color: var(--ThemeColor);
+}
+#NewSubscriptionPopup input {
+    width: 80%;
+    height: 20%;
+    font-size: 24px;
+    margin-left: 10%;
+    margin-top: 20px;
+}
+#NewSubscriptionPopup button {
+    margin-top: 10px;
+    padding: 8px 5px 8px 5px;
+    margin-left: 42%;
 }

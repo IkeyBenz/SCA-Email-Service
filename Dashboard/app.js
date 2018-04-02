@@ -129,7 +129,11 @@ function loadStats() {
     })
 }
 function initializeImageUploaderView() {
+    const fileDropContainer = document.getElementById('FileDroperContainer');
     database.ref("SubcriptionOptions").once("value", function(snapshot) {
+        while (fileDropContainer.lastChild) {
+            fileDropContainer.removeChild(fileDropContainer.lastChild);
+        }
         snapshot.forEach(function(child) {
             const imageContainer = document.createElement('div');
             imageContainer.setAttribute('class', 'PrevImgContainer');
@@ -162,7 +166,7 @@ function initializeImageUploaderView() {
             gradient.appendChild(progressIndicator);
             gradient.appendChild(clearDiv);
             imageContainer.appendChild(gradient);
-            document.getElementById('FileDroperContainer').appendChild(imageContainer);
+            fileDropContainer.appendChild(imageContainer);
         })
     })
 }
@@ -202,11 +206,53 @@ function changeBGImg(input, imgID) {
         reader.readAsDataURL(input.files[0]);
     }
 }
-function sendEmailToSubscribers() {
+function getSubscriberKeys() {
     database.ref('Subscribers').once('value', function(subscribers) {
         subscribers.forEach(function(subscriber) {
-            const emailAddr = subscriber.val().Email;
+            console.log(subscriber.key);
 
         })
     })
+}
+function initiateAdd() {
+    const popup = document.createElement('div');
+    popup.setAttribute('id', 'NewSubscriptionPopup');
+    const authorInput = document.createElement('input');
+    authorInput.setAttribute('id', 'authorInput');
+    authorInput.setAttribute('type', 'text');
+    authorInput.placeholder = "Author";
+    const titleInput = document.createElement('input');
+    titleInput.setAttribute('id', 'titleInput');
+    titleInput.setAttribute('type', 'text');
+    titleInput.placeholder = "Title";
+    const submitButton = document.createElement('button');
+    submitButton.setAttribute('onclick', 'addSubscription();');
+    submitButton.appendChild(document.createTextNode('Add Subscription'));
+    popup.appendChild(authorInput);
+    popup.appendChild(titleInput);
+    popup.appendChild(submitButton);
+    document.body.appendChild(popup);
+}
+function initiateRemove() {
+
+}
+function addSubscription() {
+    var newSub = database.ref('SubcriptionOptions').push({
+        Author: document.getElementById('authorInput').value,
+        Title: document.getElementById('titleInput').value,
+        Subscribers: 0
+    });
+    database.ref('Subscribers').once('value', function(subscribers) {
+        subscribers.forEach(function(subscriber) {
+            if (subscriber) {
+                database.ref(`Subscribers/${subscriber.key}/Subscriptions/${newSub.key}`).set(false);
+            }
+        })
+    })
+    document.body.removeChild(document.getElementById('NewSubscriptionPopup'));
+    initializeImageUploaderView();
+    alert("Your new subscription has been saved.");
+}
+function removeSubscription(subscriptionID) {
+
 }
