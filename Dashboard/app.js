@@ -138,16 +138,25 @@ function initializeImageUploaderView() {
                 // Images were not yet uploaded
             });
             const gradient = document.createElement('div');
-            gradient.setAttribute('class', 'TopWhiteGradient');
+            gradient.setAttribute('class', 'TopGradient');
             gradient.setAttribute('id', `${child.key}-gradient`);
             const imgInput = document.createElement('input');
             imgInput.setAttribute('type', 'file');
             imgInput.setAttribute('id', `${child.key}-input`);
             imgInput.setAttribute('onchange', `changeBGImg(this, '${child.key}')`);
+            imgInput.style.float = 'left';
             const desc = document.createElement('h2');
             desc.appendChild(document.createTextNode(`${child.val().Author}: ${child.val().Title}`));
+            const progressIndicator = document.createElement('p');
+            progressIndicator.setAttribute('id', `${child.key}-progress`);
+            progressIndicator.style.float = 'left';
+            const clearDiv = document.createElement('div');
+            clearDiv.style.height = '10px';
+            clearDiv.style.width = '100%';
             gradient.appendChild(desc);
             gradient.appendChild(imgInput);
+            gradient.appendChild(progressIndicator);
+            gradient.appendChild(clearDiv);
             imageContainer.appendChild(gradient);
             document.getElementById('FileDroperContainer').appendChild(imageContainer);
         })
@@ -155,11 +164,19 @@ function initializeImageUploaderView() {
 }
 function uploadImageFrom(containerID) {
     const file = document.getElementById(`${containerID}-input`).files[0];
-    var upload = storage.ref(`Images/${containerID}`).put(file).then(function(snapshot) {
+    var uploadTask = storage.ref('Images/').child(`${containerID}`).put(file);
+
+    uploadTask.on('state_changed', function(snapshot) {
+        var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        document.getElementById(`${containerID}-uploadButton`).style.display = 'none';
+        document.getElementById(`${containerID}-progress`).innerHTML = `(${progress}% / 100% complete.)`;
+    }, function(error) {
+        // Handle unsuccessful uploads
+    }, function() {
         document.getElementById(`${containerID}-gradient`).style.background = 'linear-gradient(rgb(152, 251, 152), rgba(152, 251, 152, 0.2))';
-        const downloadURL = snapshot.downloadURL;
-        console.log(downloadURL);
-    })
+        document.getElementById(`${containerID}-progress`).innerHTML = "Uploaded Successfully";
+        var downloadURL = uploadTask.snapshot.downloadURL;
+    });
 }
 
 function changeBGImg(input, imgID) {
@@ -168,11 +185,12 @@ function changeBGImg(input, imgID) {
         reader.onload = function (e) {
             const imageContainer = document.getElementById(imgID);
             imageContainer.style.backgroundImage = `url(${e.target.result})`;
-            imageContainer.style.backgroundColor = 'lightgray';
             if (document.getElementById(`${imgID}-uploadButton`) == null) {
                 const uploadBtn = document.createElement('button');
                 uploadBtn.setAttribute('onclick', `uploadImageFrom('${imgID}')`);
                 uploadBtn.setAttribute('id', `${imgID}-uploadButton`);
+                uploadBtn.style.float = 'left';
+                uploadBtn.style.marginTop = '-6px';
                 uploadBtn.appendChild(document.createTextNode('Upload'));
                 document.getElementById(`${imgID}-gradient`).appendChild(uploadBtn);
             }
