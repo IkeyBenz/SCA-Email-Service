@@ -8,9 +8,11 @@ var config = {
 };
 
 firebase.initializeApp(config);
+document.onload = toggleLoignView();
+
 var database = firebase.database();
 
-var loggedIn = false;
+var loggedIn = true;
 
 // function uploadNewPreferenceOptions() {
 //     const authors = ["Rabbi Marc Angel", "Rabbi Joseph Beyda", "Rabbi David Cardozo", "Rabbi Joseph Dweck",

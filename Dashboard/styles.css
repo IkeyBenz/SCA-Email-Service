@@ -6,6 +6,7 @@
 }
 body {
     margin: 0 0;
+    height: 100vh;
 }
 .login-container {
     position: fixed;
@@ -41,11 +42,9 @@ body {
     width: auto;
     z-index: 5;
 }
-/* Make Stats Wrapper and set similar properties as .Wrapper */
 .Stats {
     width: var(--StatsWidth);
-    min-height: 100vh;
-    overflow-y: scroll;
+    height: 100vh;
     position: fixed;
     left: 0px;
     background-color: rgba(0, 0, 0, 0.5);
@@ -53,29 +52,24 @@ body {
     animation: ease;
     animation-duration: 0.5s;
     display: none;
+    overflow-y: scroll;
 }
+
 .Stats h1 {
     width: 100%;
-    height: 80px;
-    height: var(--HeaderHeight);
+    height: 50px;
     text-align: center;
     color: white;
     text-decoration: underline;
 }
 
-.Wrapper {
+.FileDroperContainer {
     position: fixed;
     left: var(--StatsWidth);
-    width: var(--RightSideWidth);
-    height: calc(100vw - var(--HeaderHeight));
     top: var(--HeaderHeight);
+    width: var(--RightSideWidth);
+    height: calc(100vh - var(--HeaderHeight));
     overflow-y: scroll;
-    animation: ease;
-    animation-duration: 0.5s;
-}
-.FileDroperContainer {
-    width: 100%;
-    height: calc(var(--RightSideWidth) * 2.5);
 }
 .left {
     left: 20px;
@@ -91,7 +85,7 @@ body {
 }
 .PrevImgContainer {
     width: calc(50% - 2px);
-    height: calc(20% - 2px);
+    height: calc(calc(var(--RightSideWidth) / 2) - 2px);
     color: lightblue;
     border: solid 1px black;
     background-size: contain;
