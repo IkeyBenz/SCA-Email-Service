@@ -93,6 +93,7 @@ function pushChanges() {
             } else {
                 // Otherwise create a new subID for the subscriber
                 subID = database.ref("Subscribers").push().key;
+                addDBStats(newSubs);
             }
             database.ref(`Subscribers/${subID}`).set({
                 Email: emailAddress,
@@ -100,7 +101,6 @@ function pushChanges() {
                 Subscriptions: newSubs
             });
             database.ref(`Zipcodes/${zip}/${subID}`).set(emailAddress);
-            addDBStats(newSubs);
             alert("Your subscription preferences have been saved.");
         })
     } else {

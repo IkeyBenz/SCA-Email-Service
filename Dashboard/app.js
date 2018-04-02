@@ -116,7 +116,11 @@ function toggleStatsBar() {
     return false;
 }
 function loadStats() {
-    database.ref("SubcriptionOptions").once("value", function(snapshot) {
+    database.ref("SubcriptionOptions").on("value", function(snapshot) {
+        const statisticsContainer = document.getElementById('StatsContainer');
+        while (statisticsContainer.lastChild) {
+            statisticsContainer.removeChild(statisticsContainer.lastChild);
+        }
         snapshot.forEach(function(child) {
             const stat = document.createElement('h4');
             stat.appendChild(document.createTextNode(`${child.val().Author}: ${child.val().Title} = ${child.val().Subscribers}`));
@@ -202,7 +206,7 @@ function sendEmailToSubscribers() {
     database.ref('Subscribers').once('value', function(subscribers) {
         subscribers.forEach(function(subscriber) {
             const emailAddr = subscriber.val().Email;
-            
+
         })
     })
 }
