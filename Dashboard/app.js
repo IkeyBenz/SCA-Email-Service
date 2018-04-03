@@ -24,23 +24,6 @@ var storage = firebase.storage();
 
 var loggedIn = true;
 
-// function uploadNewPreferenceOptions() {
-//     const authors = ["Rabbi Marc Angel", "Rabbi Joseph Beyda", "Rabbi David Cardozo", "Rabbi Joseph Dweck",
-//                      "Rabbi Nathan Dweck","Rabbi Nissim Elnecavé", "Rabbi Avi Harari", "Rabbi Henry Hasson PHD",
-//                      "Rabbi Alex Israel", "Rabbi Jonathan Sacks", "Mr. Irving Safdieh", "Rabbi Jack Savdie"]
-//     const titles = ["Angel for Shabbat", "Torah Thought", "Thoughts to Ponder", "Touring the Talmud",
-//                     "Parasha Commentary", "Parasha Commentary", "Parasha Perspectives", "Ach Moshe",
-//                     "The Parsha Discussion", "Covenant and Conversation", "Sabra Report", "Kol Yaakob"]
-//     for (var i = 0; i < authors.length; i++) {
-//         database.ref('SubcriptionOptions').push({
-//             Author: authors[i],
-//             Title: titles[i],
-//             Subscribers: 0
-//         });
-//     }
-// }
-// uploadNewPreferenceOptions();
-
 firebase.auth().onAuthStateChanged(function(user) {
   if (user) {
     // User is signed in.
