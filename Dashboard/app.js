@@ -123,7 +123,7 @@ function loadStats() {
         }
         snapshot.forEach(function(child) {
             const stat = document.createElement('h4');
-            stat.setAttribute('id', child.key);
+            stat.setAttribute('id', `${child.key}-stat`);
             stat.appendChild(document.createTextNode(`${child.val().Author}: ${child.val().Title} = ${child.val().Subscribers}`));
             document.getElementById('StatsContainer').appendChild(stat);
         })
@@ -239,7 +239,7 @@ function initiateRemove() {
     subscriptionsPanel.forEach(function(subscription) {
         const checkbox = document.createElement('input');
         checkbox.setAttribute('type', 'checkbox');
-        checkbox.setAttribute('onclick', `removeSubscription('${subscription.id}-remove')`);
+        checkbox.setAttribute('onclick', `removeSubscription('${subscription.id.slice(0, -5)}-remove')`);
         subscription.appendChild(checkbox);
     })
 }
@@ -280,6 +280,4 @@ function removeSubscription(subscriptionID) {
     } else {
         loadStats();
     }
-
-
 }
