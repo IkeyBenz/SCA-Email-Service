@@ -12,7 +12,6 @@ document.onload = preloadStuff();
 
 function preloadStuff() {
     setTimeout(function() {
-        toggleLoignView();
         initializeImageUploaderView();
         toggleStatsBar();
         toggleStatsBar();
@@ -22,7 +21,7 @@ function preloadStuff() {
 var database = firebase.database();
 var storage = firebase.storage();
 
-var loggedIn = true;
+var loggedIn = false;
 
 firebase.auth().onAuthStateChanged(function(user) {
   if (user) {
