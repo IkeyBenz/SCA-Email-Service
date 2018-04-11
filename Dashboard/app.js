@@ -121,14 +121,22 @@ function initializeImageUploaderView() {
             const imageContainer = document.createElement('div');
             imageContainer.setAttribute('class', 'PrevImgContainer');
             imageContainer.setAttribute('id', child.key);
+            const gradient = document.createElement('div');
             storage.ref(`Images/${child.key}`).getDownloadURL().then(function(url) {
                 if (url) {
                     imageContainer.style.backgroundImage = `url(${url})`;
+                    // NEW
+                    const removeBtn = document.createElement('button');
+                    removeBtn.setAttribute('id', `${child.key}-removeButton`);
+                    removeBtn.setAttribute('onclick', `removeImageFor('${child.key}')`);
+                    removeBtn.appendChild(document.createTextNode("Remove Image"));
+                    gradient.appendChild(removeBtn);
+                    // END NEW
                 }
             }).catch(function(error) {
                 // Images were not yet uploaded
             });
-            const gradient = document.createElement('div');
+
             gradient.setAttribute('class', 'TopGradient');
             gradient.setAttribute('id', `${child.key}-gradient`);
             const imgInput = document.createElement('input');
@@ -144,6 +152,7 @@ function initializeImageUploaderView() {
             const clearDiv = document.createElement('div');
             clearDiv.style.height = '10px';
             clearDiv.style.width = '100%';
+
             gradient.appendChild(desc);
             gradient.appendChild(imgInput);
             gradient.appendChild(progressIndicator);
@@ -153,6 +162,13 @@ function initializeImageUploaderView() {
         })
     })
 }
+
+// NEW
+function removeImageFrom(imgID) {
+    storage.ref(`Images/${imgID}`).remove();
+    initializeImageUploaderView();
+}
+// END NEW
 function uploadImageFrom(containerID) {
     const file = document.getElementById(`${containerID}-input`).files[0];
     var uploadTask = storage.ref('Images/').child(`${containerID}`).put(file);
