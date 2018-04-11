@@ -109,6 +109,9 @@ body {
     width: 100%;
     background: linear-gradient(white, rgba(255, 255, 255, 0.2));
 }
+.SpaceBottom {
+    margin-bottom: 100px;
+}
 p {
     margin-top: 2px;
     margin-bottom: 2px;

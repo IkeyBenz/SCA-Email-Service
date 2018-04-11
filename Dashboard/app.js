@@ -21,7 +21,7 @@ function preloadStuff() {
 var database = firebase.database();
 var storage = firebase.storage();
 
-var loggedIn = false;
+var lggdIn = false;
 
 firebase.auth().onAuthStateChanged(function(user) {
   if (user) {
@@ -36,27 +36,28 @@ firebase.auth().onAuthStateChanged(function(user) {
     displayName.className = 'icon right';
     displayName.style.color = 'white';
     header.appendChild(displayName);
+    hl();
+    lggdIn = true;
     setTimeout(function () {
         console.log(displayName.offsetWidth);
         profileIcon.style.right = `${displayName.offsetWidth + 30}px`;
     }, 500)
   } else {
-    // User is signed out.
-    // ...
+    sl();
+    lggdIn = false;
   }
 });
-
-function toggleLoignView() {
+function hl() {
     const overlay = document.getElementById('Overlay');
     const loginView = document.getElementById('LoginView');
-    if (overlay.style.display == 'none') {
-        overlay.style.display = 'block';
-        loginView.style.display = 'block';
-    } else {
-        overlay.style.display = 'none';
-        loginView.style.display = 'none';
-    }
-
+    overlay.style.display = 'none';
+    loginView.style.display = 'none';
+}
+function sl() {
+    const overlay = document.getElementById('Overlay');
+    const loginView = document.getElementById('LoginView');
+    overlay.style.display = 'block';
+    loginView.style.display = 'block';
 }
 function login() {
     const email = document.getElementById('login-email').value;
@@ -64,27 +65,17 @@ function login() {
     var successful = true;
     if (email != "" && password != "") {
         firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
-          // Handle Errors here.
           var errorCode = error.code;
           var errorMessage = error.message;
-          successful = false;
           alert(`${errorCode}\n\n${errorMessage}`);
         });
-        setTimeout(function () {
-            if (successful) {
-                loggedIn = true;
-                toggleLoignView();
-            }
-        }, 1000);
     } else {
-        loggedIn = false;
         alert('Please make sure all fields are filled out properly.');
     }
 }
 
-
 function toggleStatsBar() {
-    if (loggedIn) {
+    if (lggdIn) {
         if (document.getElementById('StatsBar').style.display == "none") {
             loadStats();
             document.documentElement.style.setProperty('--StatsWidth', '300px');
@@ -126,11 +117,11 @@ function initializeImageUploaderView() {
                 if (url) {
                     imageContainer.style.backgroundImage = `url(${url})`;
                     // NEW
-                    const removeBtn = document.createElement('button');
-                    removeBtn.setAttribute('id', `${child.key}-removeButton`);
-                    removeBtn.setAttribute('onclick', `removeImageFor('${child.key}')`);
-                    removeBtn.appendChild(document.createTextNode("Remove Image"));
-                    gradient.appendChild(removeBtn);
+                    // const removeBtn = document.createElement('button');
+                    // removeBtn.setAttribute('id', `${child.key}-removeButton`);
+                    // removeBtn.setAttribute('onclick', `removeImageFor('${child.key}')`);
+                    // removeBtn.appendChild(document.createTextNode("Remove Image"));
+                    // gradient.appendChild(removeBtn);
                     // END NEW
                 }
             }).catch(function(error) {
@@ -164,10 +155,10 @@ function initializeImageUploaderView() {
 }
 
 // NEW
-function removeImageFrom(imgID) {
-    storage.ref(`Images/${imgID}`).remove();
-    initializeImageUploaderView();
-}
+// function removeImageFrom(imgID) {
+//     storage.ref(`Images/${imgID}`).remove();
+//     initializeImageUploaderView();
+// }
 // END NEW
 function uploadImageFrom(containerID) {
     const file = document.getElementById(`${containerID}-input`).files[0];
