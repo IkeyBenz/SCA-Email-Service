@@ -53,7 +53,7 @@ function requiredFieldsAreFilledOut() {
     return atLeastOnecheckboxIsSelected
 }
 function editSubscriptions() {
-    const emailAddress = document.getElementById('editemail').value;
+    const emailAddress = document.getElementById('editemail').value.toLowerCase();
     if (emailAddress == "") {
         alert("Email address field cannot be empty.");
     } else {
@@ -80,7 +80,7 @@ function editSubscriptions() {
 
 function pushChanges() {
     if (requiredFieldsAreFilledOut()) {
-        const emailAddress = document.getElementById('email').value;
+        const emailAddress = document.getElementById('email').value.toLowerCase();
         const zip = document.getElementById('zipcode').value;
         var subID = "";
         const newSubs = subscriptionData();
