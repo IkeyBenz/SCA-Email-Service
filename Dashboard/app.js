@@ -248,21 +248,16 @@ function initiateRemove() {
     })
 }
 function initiateReschedule() {
-
-    // var xhttp = new XMLHttpRequest();
-    // xhttp.onreadystatechange = function() {
-    //   if (this.readyState == 4 && this.status == 200) {
-    //       console.log(this.responseText);
-    //     }
-    // };
-    // xhttp.open("GET", "https://sca-email-server.herokuapp.com/nextBlast", true);
-    // xhttp.send();
     const popup = document.createElement('div');
     popup.setAttribute('id', 'ReschedulePopup');
 
     const heading = document.createElement('h3');
-    heading.appendChild(document.createTextNode("The blast is scheduled for ____. Please enter the time you'd like to reschedule it for."));
-
+    database.ref('ScheduleTime').once('value', function(snapshot) {
+        const day = snapshot.val().Day;
+        const hour = snapshot.val().Hour;
+        const minute = snapshot.val().Minute;
+        heading.appendChild(document.createTextNode(`The blast is scheduled for ${day}, at ${hour}:${minute}. Please enter the time you'd like to reschedule it for.`));
+    });
     const dayInfo = document.createElement('span');
     dayInfo.appendChild(document.createTextNode("Day: "));
     const dayTF = document.createElement('input');
@@ -304,8 +299,32 @@ function initiateReschedule() {
 
     document.body.appendChild(popup);
 }
-
 function cancelReschedule() {
+    document.getElementById('ReschedulePopup').style.display = 'none';
+}
+function reschedule() {
+    const day = document.getElementById('reschedule-day').value;
+    const hour = document.getElementById('reschedule-hour').value;
+    const minute = document.getElementById('reschedule-minute').value;
+    const validDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    if (!validDays.includes(day)) {
+        alert(`Invalid day entered.\nPlease format the day as the ones in this list:\n${validDays}`);
+        return;
+    }
+    if (hour > 23 || hour < 0) {
+        alert('Invalid hour entered.\nPlease ensure the hour value entered is a number between 0-23');
+        return;
+    }
+    if (minute > 59 || minute < 0) {
+        alert('Invalid minute value entered.\nPlease ensure the minutes value entered is a number between 0-59');
+        return;
+    }
+    database.ref('ScheduleTime').set({
+        Day: day,
+        Hour: hour,
+        Minute: minute
+    });
+    alert(`Email blast shedule updated to ${day}, ${hour}:${minute}`);
     document.getElementById('ReschedulePopup').style.display = 'none';
 }
 function addSubscription() {
