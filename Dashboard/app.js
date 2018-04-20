@@ -113,21 +113,17 @@ function initializeImageUploaderView() {
             imageContainer.setAttribute('class', 'PrevImgContainer');
             imageContainer.setAttribute('id', child.key);
             const gradient = document.createElement('div');
-            storage.ref(`Images/${child.key}`).getDownloadURL().then(function(url) {
-                if (url) {
-                    imageContainer.style.backgroundImage = `url(${url})`;
-                    // NEW
-                    // const removeBtn = document.createElement('button');
-                    // removeBtn.setAttribute('id', `${child.key}-removeButton`);
-                    // removeBtn.setAttribute('onclick', `removeImageFor('${child.key}')`);
-                    // removeBtn.appendChild(document.createTextNode("Remove Image"));
-                    // gradient.appendChild(removeBtn);
-                    // END NEW
+            database.ref(`SubcriptionOptions/${child.key}`).once('value', function(snapshot) {
+                if (Object.keys(snapshot.val()).includes("DownloadURL")) {
+                    const downloadURL = snapshot.val()["DownloadURL"];
+                    imageContainer.style.backgroundImage = `url(${downloadURL})`;
+                    const removeBtn = document.createElement('button');
+                    removeBtn.setAttribute('id', `${child.key}-removeButton`);
+                    removeBtn.setAttribute('onclick', `removeImageFrom('${child.key}')`);
+                    removeBtn.appendChild(document.createTextNode("Remove Image"));
+                    gradient.appendChild(removeBtn);
                 }
-            }).catch(function(error) {
-                // Images were not yet uploaded
             });
-
             gradient.setAttribute('class', 'TopGradient');
             gradient.setAttribute('id', `${child.key}-gradient`);
             const imgInput = document.createElement('input');
@@ -154,11 +150,26 @@ function initializeImageUploaderView() {
     })
 }
 
+function addRemoveImgButton(gradientID) {
+    const gradient = document.getElementById(gradientID);
+}
+
 // NEW
-// function removeImageFrom(imgID) {
-//     storage.ref(`Images/${imgID}`).remove();
-//     initializeImageUploaderView();
-// }
+function removeImageFrom(imgID) {
+    storage.ref(`Images/${imgID}`).delete().then(function() {
+        database.ref(`SubcriptionOptions/${imgID}/DownloadURL`).remove().then(function() {
+            initializeImageUploaderView();
+        }).catch(function(error) {
+            if (error) {
+                alert(error);
+            }
+        });
+    }).catch(function(error) {
+        if (error) {
+            alert(error);
+        }
+    });
+}
 // END NEW
 function uploadImageFrom(containerID) {
     const file = document.getElementById(`${containerID}-input`).files[0];
@@ -169,11 +180,15 @@ function uploadImageFrom(containerID) {
         document.getElementById(`${containerID}-uploadButton`).style.display = 'none';
         document.getElementById(`${containerID}-progress`).innerHTML = `(${progress}% / 100% complete.)`;
     }, function(error) {
-        // Handle unsuccessful uploads
+        if (error) {
+            document.getElementById(`${containerID}-gradient`).style.background = 'linear-gradient(rgb(255, 152, 152), rgba(255, 152, 152, 0.2))';
+            document.getElementById(`${containerID}-progress`).innerHTML = "Upload Failed";
+            alert(error);
+        }
     }, function() {
         document.getElementById(`${containerID}-gradient`).style.background = 'linear-gradient(rgb(152, 251, 152), rgba(152, 251, 152, 0.2))';
         document.getElementById(`${containerID}-progress`).innerHTML = "Uploaded Successfully";
-        var downloadURL = uploadTask.snapshot.downloadURL;
+        database.ref(`SubcriptionOptions/${containerID}/DownloadURL`).set(uploadTask.snapshot.downloadURL);
     });
 }
 
@@ -231,6 +246,67 @@ function initiateRemove() {
         checkbox.setAttribute('onclick', `removeSubscription('${subscription.id.slice(0, -5)}-remove')`);
         subscription.appendChild(checkbox);
     })
+}
+function initiateReschedule() {
+
+    // var xhttp = new XMLHttpRequest();
+    // xhttp.onreadystatechange = function() {
+    //   if (this.readyState == 4 && this.status == 200) {
+    //       console.log(this.responseText);
+    //     }
+    // };
+    // xhttp.open("GET", "https://sca-email-server.herokuapp.com/nextBlast", true);
+    // xhttp.send();
+    const popup = document.createElement('div');
+    popup.setAttribute('id', 'ReschedulePopup');
+
+    const heading = document.createElement('h3');
+    heading.appendChild(document.createTextNode("The blast is scheduled for ____. Please enter the time you'd like to reschedule it for."));
+
+    const dayInfo = document.createElement('span');
+    dayInfo.appendChild(document.createTextNode("Day: "));
+    const dayTF = document.createElement('input');
+    dayTF.setAttribute('type', 'text');
+    dayTF.setAttribute('id', 'reschedule-day');
+    dayInfo.appendChild(dayTF);
+
+    const hourInfo = document.createElement('span');
+    hourInfo.appendChild(document.createTextNode('Hour: '));
+    const hourTF = document.createElement('input');
+    hourTF.setAttribute('type', 'text');
+    hourTF.setAttribute('id', 'reschedule-hour');
+    hourInfo.appendChild(hourTF);
+
+    const minuteInfo = document.createElement('span');
+    minuteInfo.appendChild(document.createTextNode("Minute: "));
+    const minuteTF = document.createElement('input');
+    minuteTF.setAttribute('type', 'text');
+    minuteTF.setAttribute('id', 'reschedule-minute');
+    minuteInfo.appendChild(minuteTF);
+
+    const submitButton = document.createElement('button');
+    submitButton.appendChild(document.createTextNode('Submit'));
+    submitButton.setAttribute('onclick', 'reschedule()');
+
+    const cancelButton = document.createElement('button');
+    cancelButton.appendChild(document.createTextNode('Cancel'));
+    cancelButton.setAttribute('onclick', 'cancelReschedule();');
+
+    const buttonContainer = document.createElement('div');
+    buttonContainer.appendChild(submitButton);
+    buttonContainer.appendChild(cancelButton);
+
+    popup.appendChild(heading);
+    popup.appendChild(dayInfo);
+    popup.appendChild(hourInfo);
+    popup.appendChild(minuteInfo);
+    popup.appendChild(buttonContainer);
+
+    document.body.appendChild(popup);
+}
+
+function cancelReschedule() {
+    document.getElementById('ReschedulePopup').style.display = 'none';
 }
 function addSubscription() {
     var newSub = database.ref('SubcriptionOptions').push({

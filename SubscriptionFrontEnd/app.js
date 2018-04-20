@@ -57,7 +57,7 @@ function editSubscriptions() {
     if (emailAddress == "") {
         alert("Email address field cannot be empty.");
     } else {
-        database.ref("Subscribers").orderByChild("Email").equalTo(emailAddress).once("value",snapshot => {
+        database.ref("Subscribers").orderByChild("Email").equalTo(emailAddress).once("value", snapshot => {
             if (snapshot.val()) {
                 const userKey = snapshot.val()[Object.keys(snapshot.val())];
                 document.getElementById('email').value = emailAddress;
